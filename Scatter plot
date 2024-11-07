@@ -1,0 +1,56 @@
+import matplotlib.pyplot as plt
+from adjustText import adjust_text
+import pandas as pd
+import numpy as np
+
+# Read data of X and Y
+data = pd.read_excel('Scatter plot P3 new.xlsx', sheet_name = 'MCS')
+x= data['pp_oa_all']
+y= data['pp_oa_csc']
+color1 = '#EE6363'
+color2 = '#228B22'
+color3 = '#4F94CD'
+color4 = '#FFD700'
+color5 = '#9B30FF'
+label = data['country']
+min_x = min(x)
+min_y = min(y) 
+max_x = max(x)
+max_y = max(y)
+
+plt.figure(figsize=(5.5, 5.5))
+# Define a colormap for values from 1 to 6
+pastel_cmap = plt.get_cmap('Set3', 6)
+
+plt.scatter(x, y, s=450, c=color2, cmap=pastel_cmap)
+
+plt.xticks(fontsize=16, fontweight='bold')
+plt.yticks(fontsize=16, fontweight='bold')
+
+# Plot a constant diagonal line
+plt.plot([0.9, 1.9], [0.9, 1.9], color='red', linestyle='--')
+# 
+plt.plot([1, 1], [0.9, 1.9], color='b', linewidth=2, linestyle='--')  # 
+plt.plot([0.9, 1.9], [1, 1], color='b', linewidth=2, linestyle=':')   # 
+
+
+# Add labels for each point
+new_texts = []
+for i, txt in enumerate(zip(x, y, label)):
+    new_text = plt.text(txt[0], txt[1], txt[2], fontsize=20,fontweight='bold')
+                        #horizontalalignment='right', 
+                        ##verticalalignment='bottom', 
+                        
+    new_texts.append(new_text)
+adjust_text(new_texts,force_text= (0.7,1.5),arrowprops=dict(arrowstyle='->',color='grey',lw=0.2))
+
+# Customize the plot
+plt.xlim(0.9, 1.9)
+plt.ylim(0.9, 1.9)
+plt.xlabel('MNCS(Country(Except CSC awardees))',fontsize = 'x-large', fontweight='bold')
+plt.ylabel('MNCS(CSC awardees)', fontsize = 'x-large', fontweight="bold")
+#plt.legend()
+plt.grid(True)
+
+# Show the plot
+plt.show()
