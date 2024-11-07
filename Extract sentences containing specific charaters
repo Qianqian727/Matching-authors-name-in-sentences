@@ -1,0 +1,75 @@
+#### extracting the csc sentences
+import re
+import pandas as pd
+#import spacy
+import re
+alphabets= "([A-Za-z])"
+alphabets2 = "([A-Z])"
+prefixes = "(Mr|St|Mrs|Ms|Dr|Postdoc|Prof)[.]"
+suffixes = "(Inc|Ltd|Jr|Sr|Co)"
+starters = "(Mr|Mrs|Ms|Dr|Prof|Capt|Cpt|Lt|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)" #
+acronyms2 = "([A-Z][.-][A-Z][.])"
+websites = "[.](com|net|org|io|gov|edu|me)"
+digits = "([0-9])"
+grantnum = "(no|No|Nos|nos)[.]"
+multiple_dots = r'\.{2,}'
+def split_into_sentences(text: str):
+    text = " " + text + "  "
+    text = text.replace("\n"," ") 
+    text = re.sub(prefixes,"\\1<prd>",text) #
+    text = re.sub(websites,"<prd>\\1",text) 
+    text = re.sub(digits + "[.]" + digits,"\\1<prd>\\2",text)
+    text = re.sub(multiple_dots, lambda match: "<prd>" * len(match.group(0)) + "<stop>", text)
+    text = re.sub(grantnum, '\\1<prd>', text)
+    if "Ph.D" in text: text = text.replace("Ph.D.","Ph<prd>D<prd>")
+    text = re.sub("\s" + alphabets + "[.] ", " \\1<prd> ", text)
+    text = re.sub(" " + alphabets + "[.]" + alphabets + "[.]" + alphabets + "[.]", " \\1<prd>\\2<prd>\\3<prd>", text)
+    text = re.sub(" " + alphabets + "[.]" + alphabets + "[.]", " \\1<prd>\\2<prd>", text)
+    text = re.sub(" " + alphabets + "[.]", " \\1<prd>", text)
+    text = re.sub(alphabets + "[.]" + alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>\\3<prd>", text)
+    text = re.sub(alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>", text)
+    text = re.sub(alphabets + "[.]" + alphabets, "\\1<prd>\\2", text)
+    text = re.sub(alphabets2 + "[.]" + " " + alphabets, "\\1<prd>\\2", text)  # (A._B)
+    text = re.sub(acronyms + " " + starters, "\\1<stop>\\2", text)
+    text = re.sub(alphabets2 + "[.]" + digits, "\\1<prd>\\2", text)  # (A._B)
+    text = re.sub(" "+suffixes+"[.]"+starters," \\1<stop> \\2",text)
+    text = re.sub(" "+suffixes+"[.]"," \\1<prd>",text)
+    if "”" in text: text = text.replace(".”","”.")
+    if "\"" in text: text = text.replace(".\"","\".")
+    if "!" in text: text = text.replace("!\"","\"!")
+    if "?" in text: text = text.replace("?\"","\"?")
+    text = text.replace(".",".<stop>") 
+    text = text.replace("?","?<stop>")
+    text = text.replace("!","!<stop>") 
+    text = text.replace("<prd>",".") 
+    sentences = text.split("<stop>") 
+    sentences = [s.strip() for s in sentences]
+    if sentences and not sentences[-1]:sentences = sentences[:-1]
+    return sentences
+def extract_csc_sentences(data):
+    matched_sentences = []
+    sentences_ut = []
+    data1 = data
+    for i in range(len(data1)):
+        ut = str((data1.iloc[i])[0])
+        funding_text = (data1.iloc[i])[1] ## string
+        if "China Scholarship Council" in funding_text or "Chinese Scholarship Council" in funding_text \
+                or "China scholarship council" in funding_text or "China Scholarship council" in funding_text \
+                or "China Sponsorship Council" in funding_text or "China Scholarships Council" in funding_text \
+                or "CSC" in funding_text:
+            funding_sentences = split_into_sentences(funding_text)
+            for sentence in funding_sentences:
+                sentence1 = str(sentence)
+                if "China Scholarship Council" in sentence1 or "Chinese Scholarship Council" in sentence1\
+                        or "China scholarship council" in sentence1 or "China Scholarship council" in sentence1\
+                        or "China Sponsorship Council" in sentence1 or "China Scholarships Council" in sentence1\
+                        or "CSC" in sentence1:
+                    matched_sentences.append([ut,sentence1])
+        else:
+            matched_sentences.append([ut,'No'])
+    print(matched_sentences)
+    print(len(matched_sentences))
+    dataframe = pd.DataFrame(matched_sentences,columns=['ut','csc_sentence'])
+    dataframe.to_excel("csc_authors_and_sentence_remianingdata.xlsx")
+extract_csc_sentences(df)
