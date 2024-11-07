@@ -1,0 +1,107 @@
+###different names' varitions
+
+first_name_initial_dot = []
+first_name_initial_dot1 = []
+first_name_initial_dot2 = []
+first_name_initial_dot3 = []
+first_name_initial_dot4 = []
+row_first_initial = originical_name['first_name_initial']
+last_name = originical_name['last_name']
+for i in range(len(row_first_initial)): 
+    if len(row_first_initial[i])>2:
+        first_name_initial1 = str(row_first_initial[i][1] + '.-'+row_first_initial[i][2]+ '.'+last_name[i][0] + '.' )
+        first_name_initial2 = str(row_first_initial[i][1] + '.'+row_first_initial[i][2]+ '.'+last_name[i][0] + '.' )
+        first_name_initial3 = str(row_first_initial[i][1] + '.'+row_first_initial[i][2]+ '.'+last_name[i])
+        first_name_initial4 = str(row_first_initial[i]+last_name[i][0])
+        first_name_initial5 = str(row_first_initial[i]+last_name[i][0] + "'s" )
+        first_name_initial_dot.append(first_name_initial1)
+        first_name_initial_dot1.append(first_name_initial2)
+        first_name_initial_dot2.append(first_name_initial3)
+        first_name_initial_dot3.append(first_name_initial4)
+        first_name_initial_dot4.append(first_name_initial5)
+    else:
+        first_name_initial_dot.append(row_first_initial[i])
+        first_name_initial_dot1.append(row_first_initial[i])
+        first_name_initial_dot2.append(row_first_initial[i])
+        first_name_initial_dot3.append(row_first_initial[i])
+        first_name_initial_dot4.append(row_first_initial[i])
+originical_name.insert(8, 'first_name_initial1', first_name_initial_dot)
+originical_name.insert(9, 'first_name_initial2', first_name_initial_dot1)
+originical_name.insert(10, 'first_name_initial3', first_name_initial_dot2)
+originical_name.insert(11, 'first_name_initial4', first_name_initial_dot3)
+originical_name.insert(12, 'first_name_initial5', first_name_initial_dot4)
+
+name_virous1 = []
+name_virous2 = []
+name_virous3 = []
+name_virous4 = []
+name_virous5 = []
+name_virous6 = []
+row_first_initial = originical_name['first_name_initial']
+last_name = originical_name['last_name']
+for i in range(len(row_first_initial)):
+    if len(row_first_initial[i])>2:
+        name_virous_1 = str(row_first_initial[i][1] + '.-'+row_first_initial[i][2]+ '.'+last_name[i])
+        name_virous_2 = str(row_first_initial[i][1] + '.'+' '+row_first_initial[i][2]+  '.'+' '+last_name[i][0] + '.' )
+        name_virous_3 = str(row_first_initial[i][1] + '.'+' '+row_first_initial[i][2]+  '.'+' '+last_name[i])
+        name_virous_4 = str(row_first_initial[i][1] + '-'+row_first_initial[i][2]+ '.'+last_name[i][0]+ '.')
+        name_virous_5 = str(row_first_initial[i]+ ' '+ last_name[i])
+        name_virous_6 = str(row_first_initial[i][1] + '.'+' '+row_first_initial[i][2]+  '.'+' '+last_name[i] +"'s")
+        name_virous1.append(name_virous_1)
+        name_virous2.append(name_virous_2)
+        name_virous3.append(name_virous_3)
+        name_virous4.append(name_virous_4)
+        name_virous5.append(name_virous_5)
+        name_virous6.append(name_virous_6)
+    else:
+        name_virous1.append(row_first_initial[i])
+        name_virous2.append(row_first_initial[i])
+        name_virous3.append(row_first_initial[i])
+        name_virous4.append(row_first_initial[i])
+        name_virous5.append(row_first_initial[i])
+        name_virous6.append(row_first_initial[i])
+originical_name.insert(13, 'name_virous12', name_virous1)
+originical_name.insert(14, 'name_virous13', name_virous2)
+originical_name.insert(15, 'name_virous14', name_virous3)
+originical_name.insert(16, 'name_virous15', name_virous4)
+originical_name.insert(17, 'name_virous16', name_virous5)
+
+
+
+###### Matching authors whether in the sentences
+
+list_ut = []
+list_cluster_id =[]
+list_author_seq = []
+list_full_name =[]
+list_author_full_name_id =[]
+list_full_namecwts =[]
+list_full_namecwts_verse = []
+list_full_name_verse = []
+list_csc_sentence = []
+df = pd.DataFrame(columns=['ut','cluster_id','author_seq','author_full_name_id','full_name','full_name_verse', 'full_namecwts','full_namecwts_verse','csc_sentences'])
+csc_sentence = originical_name['csc_sentence']
+for i in range(len(originical_name)):
+    row = originical_name.iloc[i] 
+    for j in range(len(row)-4):
+        if row[j+3] in row[47] and len(row[j+3].strip()) >1:
+            list_ut.append(row[0])
+            list_cluster_id.append(row[1])
+            list_author_seq.append(row[2])
+            list_author_full_name_id.append(row[8])
+            list_full_name.append(row[9])
+            list_full_namecwts.append(row[10])
+            list_full_namecwts_verse.append(row[22])
+            list_full_name_verse.append(row[21])
+            list_csc_sentence.append(row[47])
+            #df.loc[i] = pd.Series({'ut':row[0], 'cluster_id':row[1], 'author_seq':row[2], 'full_name':row[24],'full_name_verse':row[7], 'full_nameA':row[6]})
+df['ut'] = list_ut 
+df['cluster_id'] = list_cluster_id
+df['author_seq'] = list_author_seq
+df['author_full_name_id'] = list_author_full_name_id
+df['full_name'] = list_full_name
+df['full_name_verse'] = list_full_name_verse
+df['full_namecwts'] = list_full_namecwts
+df['full_namecwts_verse'] = list_full_namecwts_verse
+df['csc_sentence'] = list_csc_sentence
+df1 = df.drop_duplicates()
